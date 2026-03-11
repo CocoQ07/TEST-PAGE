@@ -1,0 +1,3644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST - 统一信息管理平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a56db;
+            --secondary-color: #6b7280;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-bg: #f8fafc;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: #1f2937;
+        }
+        
+        .sidebar {
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+            min-height: 100vh;
+            position: fixed;
+            width: 250px;
+            z-index: 100;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        
+        .navbar-custom {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .nav-item {
+            margin-bottom: 5px;
+        }
+        
+        .nav-link {
+            color: #4b5563;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: #eff6ff;
+            color: var(--primary-color);
+        }
+        
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), #3b82f6);
+            color: white;
+            border-radius: 10px 10px 0 0;
+            padding: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-right: 15px;
+        }
+        
+        .risk-badge, .risk-level {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .risk-low {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .risk-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .risk-high {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .tab-content {
+            padding: 20px;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 8px;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: var(--secondary-color);
+        }
+        
+        .table th {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            border-top: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .page-section {
+            display: none;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 2px solid white;
+        }
+        
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+        .workflow-step {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background-color: #f8fafc;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .workflow-step.completed {
+            border-left-color: var(--success-color);
+            background-color: #f0fdf4;
+        }
+        
+        .workflow-step.current {
+            border-left-color: var(--warning-color);
+            background-color: #fffbeb;
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            margin-right: 10px;
+        }
+        
+        .workflow-step.completed .step-number {
+            background-color: var(--success-color);
+        }
+        
+        .workflow-step.current .step-number {
+            background-color: var(--warning-color);
+        }
+        
+        .workflow-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .workflow-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-in-progress {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-completed {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .workflow-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .workflow-timeline:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--border-color);
+        }
+        
+        .workflow-timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .workflow-timeline-item:before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            border: 2px solid white;
+        }
+        
+        .workflow-timeline-item.completed:before {
+            background-color: var(--success-color);
+        }
+        
+        .workflow-timeline-item.current:before {
+            background-color: var(--warning-color);
+        }
+        
+        .workflow-timeline-date {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+        .milestone {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background-color: #f8fafc;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .milestone.completed {
+            border-left-color: var(--success-color);
+            background-color: #f0fdf4;
+        }
+        
+        .milestone.current {
+            border-left-color: var(--warning-color);
+            background-color: #fffbeb;
+        }
+        
+        .milestone-future {
+            border-left-color: var(--border-color);
+            background-color: white;
+        }
+        
+        .milestone-date {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .milestone.completed .milestone-date {
+            color: var(--success-color);
+        }
+        
+        .milestone.current .milestone-date {
+            color: var(--warning-color);
+        }
+        
+        .rule-item {
+            padding: 15px;
+            border-left: 3px solid var(--primary-color);
+            background-color: #f8fafc;
+            margin-bottom: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .rule-id {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+        
+        .security-level {
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .security-name {
+            font-weight: 600;
+        }
+        
+        .security-desc {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+        
+        .compliance-item {
+            padding: 15px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .compliance-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-compliant {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-non-compliant {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .feature-flag {
+            padding: 10px 15px;
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .feature-name {
+            font-weight: 600;
+        }
+        
+        .feature-desc {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+        .shareholder-chart {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 400px;
+        }
+        
+        .node {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #eff6ff;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .node-person {
+            background-color: #fef7cd;
+        }
+        
+        .node-company {
+            background-color: #dbeafe;
+        }
+        
+        .node-highlight {
+            border: 2px solid var(--primary-color);
+        }
+        
+        .connection {
+            height: 2px;
+            background-color: var(--border-color);
+            margin: 0 10px;
+            position: relative;
+        }
+        
+        .connection:after {
+            content: '';
+            position: absolute;
+            right: -5px;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid var(--border-color);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">TEST</div>
+        <ul class="nav flex-column mt-3">
+            <li class="nav-item">
+                <div class="px-3 text-muted small">客户档案系统</div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="#" data-target="dashboard">
+                    <i class="fas fa-tachometer-alt"></i> 仪表板
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="profile-search">
+                    <i class="fas fa-search"></i> 客户档案搜索
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="personal-profile">
+                    <i class="fas fa-user"></i> 个人档案
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="company-profile">
+                    <i class="fas fa-building"></i> 企业档案
+                </a>
+            </li>
+             <li class="nav-item">
+                <a class="nav-link" href="#" data-target="workflows">
+                    <i class="fas fa-tasks"></i> 工作流管理
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="relationships">
+                    <i class="fas fa-project-diagram"></i> 关联关系
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="audit-logs">
+                    <i class="fas fa-clipboard-list"></i> 审计日志
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="feature-flags">
+                    <i class="fas fa-toggle-on"></i> 灰度开关
+                </a>
+            </li>
+
+            <li class="nav-item mt-4">
+                <div class="px-3 text-muted small">项目管理</div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="project-overview">
+                    <i class="fas fa-clipboard-list"></i> 项目概览
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="business-rules">
+                    <i class="fas fa-gavel"></i> 业务规则
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="security-compliance">
+                    <i class="fas fa-shield-alt"></i> 安全与合规
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="operations-monitoring">
+                    <i class="fas fa-chart-line"></i> 运营与监控
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="risk-mitigation">
+                    <i class="fas fa-exclamation-triangle"></i> 风险与对策
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="milestone-plan">
+                    <i class="fas fa-road"></i> 里程碑计划
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-target="api-reference">
+                    <i class="fas fa-code"></i> API参考
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <nav class="navbar navbar-expand navbar-custom mb-4">
+            <div class="container-fluid">
+                <div class="navbar-nav me-auto">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="搜索姓名、PID、CID或证件号后4位...">
+                    </div>
+                </div>
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> 合规官
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> 设置</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i> 退出</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div id="dashboard" class="page-section active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>统一客户档案系统</h2>
+                <div>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> 新建档案
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">1,248</h3>
+                            <p class="text-muted">个人档案总数</p>
+                            <div class="d-flex justify-content-around mt-3">
+                                <div>
+                                    <div class="text-success">85%</div>
+                                    <small class="text-muted">活跃</small>
+                                </div>
+                                <div>
+                                    <div class="text-warning">12%</div>
+                                    <small class="text-muted">待审核</small>
+                                </div>
+                                <div>
+                                    <div class="text-danger">3%</div>
+                                    <small class="text-muted">高风险</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">562</h3>
+                            <p class="text-muted">企业档案总数</p>
+                            <div class="d-flex justify-content-around mt-3">
+                                <div>
+                                    <div class="text-success">78%</div>
+                                    <small class="text-muted">活跃</small>
+                                </div>
+                                <div>
+                                    <div class="text-warning">15%</div>
+                                    <small class="text-muted">待审核</small>
+                                </div>
+                                <div>
+                                    <div class="text-danger">7%</div>
+                                    <small class="text-muted">高风险</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">42</h3>
+                            <p class="text-muted">本周ECDD流程</p>
+                            <div class="d-flex justify-content-around mt-3">
+                                <div>
+                                    <div class="text-success">24</div>
+                                    <small class="text-muted">已完成</small>
+                                </div>
+                                <div>
+                                    <div class="text-warning">18</div>
+                                    <small class="text-muted">进行中</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3 class="text-primary">28</h3>
+                            <p class="text-muted">ID合并操作</p>
+                            <div class="d-flex justify-content-around mt-3">
+                                <div>
+                                    <div class="text-success">25</div>
+                                    <small class="text-muted">自动</small>
+                                </div>
+                                <div>
+                                    <div class="text-warning">3</div>
+                                    <small class="text-muted">人工</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span>最近更新的档案</span>
+                            <a href="#" class="btn btn-sm btn-outline-primary">查看全部</a>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>档案ID</th>
+                                            <th>姓名/企业名</th>
+                                            <th>类型</th>
+                                            <th>风险等级</th>
+                                            <th>最后更新</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                            <td>张三</td>
+                                            <td><span class="badge bg-light text-dark">个人</span></td>
+                                            <td><span class="risk-badge risk-low">低风险</span></td>
+                                            <td>2025-10-20 14:30</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                            <td>ABC科技有限公司</td>
+                                            <td><span class="badge bg-light text-dark">企业</span></td>
+                                            <td><span class="risk-badge risk-medium">中风险</span></td>
+                                            <td>2025-10-19 11:15</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">PID3C8A1F6</span></td>
+                                            <td>李四</td>
+                                            <td><span class="badge bg-light text-dark">个人</span></td>
+                                            <td><span class="risk-badge risk-high">高风险</span></td>
+                                            <td>2025-10-18 16:45</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">CID7E2B9D1</span></td>
+                                            <td>XYZ贸易有限公司</td>
+                                            <td><span class="badge bg-light text-dark">企业</span></td>
+                                            <td><span class="risk-badge risk-low">低风险</span></td>
+                                            <td>2025-10-17 09:20</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">待处理任务</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">ECDD流程</div>
+                                    <small class="text-muted">3个待处理</small>
+                                </div>
+                                <span class="badge bg-warning">需关注</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">ID合并审核</div>
+                                    <small class="text-muted">2个待审核</small>
+                                </div>
+                                <span class="badge bg-primary">常规</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">Profile Review</div>
+                                    <small class="text-muted">5个待处理</small>
+                                </div>
+                                <span class="badge bg-primary">常规</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3">
+                                <div>
+                                    <div class="fw-bold">高风险档案复审</div>
+                                    <small class="text-muted">1个紧急</small>
+                                </div>
+                                <span class="badge bg-danger">紧急</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">系统状态</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>ID匹配服务</span>
+                                <span class="badge bg-success">正常</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>档案搜索</span>
+                                <span class="badge bg-success">正常</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>数据同步</span>
+                                <span class="badge bg-warning">部分延迟</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>审计日志</span>
+                                <span class="badge bg-success">正常</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile-search" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>客户档案搜索</h2>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">高级搜索</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">搜索类型</label>
+                            <select class="form-select">
+                                <option value="">所有类型</option>
+                                <option value="personal">个人档案</option>
+                                <option value="company">企业档案</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">姓名/企业名</label>
+                            <input type="text" class="form-control" placeholder="输入姓名或企业名">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">PID/CID</label>
+                            <input type="text" class="form-control" placeholder="输入PID或CID">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label">证件号/注册号</label>
+                            <input type="text" class="form-control" placeholder="输入证件号或注册号">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">风险等级</label>
+                            <select class="form-select">
+                                <option value="">所有等级</option>
+                                <option value="low">低风险</option>
+                                <option value="medium">中风险</option>
+                                <option value="high">高风险</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">状态</label>
+                            <select class="form-select">
+                                <option value="">所有状态</option>
+                                <option value="active">活跃</option>
+                                <option value="inactive">非活跃</option>
+                                <option value="pending">待审核</option>
+                                <option value="merged">已合并</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-secondary me-2">重置</button>
+                        <button class="btn btn-primary">搜索</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>搜索结果</span>
+                    <div class="text-muted small">找到 15 个匹配项</div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>档案ID</th>
+                                    <th>姓名/企业名</th>
+                                    <th>类型</th>
+                                    <th>证件号/注册号</th>
+                                    <th>风险等级</th>
+                                    <th>PEP/制裁</th>
+                                    <th>最后更新</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td>张三</td>
+                                    <td><span class="badge bg-light text-dark">个人</span></td>
+                                    <td>G12345678</td>
+                                    <td><span class="risk-badge risk-low">低风险</span></td>
+                                    <td><span class="badge bg-success">无</span></td>
+                                    <td>2025-10-20</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看档案</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                    <td>ABC科技有限公司</td>
+                                    <td><span class="badge bg-light text-dark">企业</span></td>
+                                    <td>123456789</td>
+                                    <td><span class="risk-badge risk-medium">中风险</span></td>
+                                    <td><span class="badge bg-success">无</span></td>
+                                    <td>2025-10-19</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看档案</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="搜索结果分页">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">上一页</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div id="personal-profile" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>个人档案详情</h2>
+                <div>
+                    <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="fas fa-edit me-1"></i> 后台编辑
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ecddModal">
+                        <i class="fas fa-redo me-1"></i> 发起ECDD
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="profile-header">
+                    <div class="d-flex align-items-center">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">张三</h3>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark me-2">PID8A3F2C1</span>
+                                <span class="risk-badge risk-low me-2">低风险</span>
+                                <span class="badge bg-success me-2">活跃</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <ul class="nav nav-tabs" id="personalProfileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">信息总览</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="workflows-tab" data-bs-toggle="tab" data-bs-target="#workflows-tab-content" type="button" role="tab">工作流历史</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="kyc-history-tab" data-bs-toggle="tab" data-bs-target="#kyc-history" type="button" role="tab">KYC历史</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="companies-tab" data-bs-toggle="tab" data-bs-target="#companies" type="button" role="tab">关联企业</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button" role="tab">操作日志</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="personalProfileTabContent">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">基本信息</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="30%"><strong>姓名</strong></td>
+                                            <td>张三</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>出生日期</strong></td>
+                                            <td>1985-03-15</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>性别</strong></td>
+                                            <td>男</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>国籍</strong></td>
+                                            <td>中国</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>证件类型</strong></td>
+                                            <td>身份证</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>证件号码</strong></td>
+                                            <td>G12345678</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>证件有效期</strong></td>
+                                            <td>2030-12-31 <span class="badge bg-warning ms-2">剩余5年</span></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">风险评估</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="40%"><strong>AML风险评分</strong></td>
+                                            <td>25/100 <span class="risk-badge risk-low ms-2">低风险</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>PEP状态</strong></td>
+                                            <td><span class="badge bg-success">非PEP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>制裁状态</strong></td>
+                                            <td><span class="badge bg-success">无制裁</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>负面媒体</strong></td>
+                                            <td><span class="badge bg-success">无</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>最后风险评估</strong></td>
+                                            <td>2025-10-15</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>下次复审日期</strong></td>
+                                            <td>2026-10-15</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5 class="mb-3">联系信息</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td width="30%"><strong>手机号码</strong></td>
+                                                <td>+86 138****5678</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>电子邮箱</strong></td>
+                                                <td>zhangsan@example.com</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td width="30%"><strong>居住地址</strong></td>
+                                                <td>北京市朝阳区xx街道xx号</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="workflows-tab-content" role="tabpanel">
+                            <h5 class="mb-3">工作流历史</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>工作流ID</th>
+                                            <th>类型</th>
+                                            <th>状态</th>
+                                            <th>发起人</th>
+                                            <th>创建时间</th>
+                                            <th>完成时间</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">ECDD20251020001</span></td>
+                                            <td><span class="badge bg-primary">ECDD</span></td>
+                                            <td><span class="workflow-status status-in-progress">进行中</span></td>
+                                            <td>合规官A</td>
+                                            <td>2025-10-20 10:30</td>
+                                            <td>-</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">PR20250815001</span></td>
+                                            <td><span class="badge bg-info">Profile Review</span></td>
+                                            <td><span class="workflow-status status-completed">已完成</span></td>
+                                            <td>系统自动</td>
+                                            <td>2025-08-15 09:00</td>
+                                            <td>2025-08-18 14:20</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="badge bg-light text-dark">ECDD20250410001</span></td>
+                                            <td><span class="badge bg-primary">ECDD</span></td>
+                                            <td><span class="workflow-status status-completed">已完成</span></td>
+                                            <td>合规官B</td>
+                                            <td>2025-04-10 11:15</td>
+                                            <td>2025-04-15 16:30</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#prModal">
+                                    <i class="fas fa-redo me-1"></i> 发起Profile Review
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="kyc-history" role="tabpanel">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>KYC筛查 - 2025年10月</h6>
+                                                <span class="timeline-date">2025-10-15</span>
+                                            </div>
+                                            <p>常规年度审查，风险评分25/100，低风险</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20251015001</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>入职筛查 - ABC科技公司</h6>
+                                                <span class="timeline-date">2025-08-20</span>
+                                            </div>
+                                            <p>作为ABC科技有限公司董事入职筛查</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20250820005</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>初始KYC筛查</h6>
+                                                <span class="timeline-date">2024-05-10</span>
+                                            </div>
+                                            <p>首次创建个人档案时的KYC筛查</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20240510012</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="companies" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>企业名称</th>
+                                            <th>CID</th>
+                                            <th>角色</th>
+                                            <th>持股比例</th>
+                                            <th>状态</th>
+                                            <th>任职日期</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>ABC科技有限公司</td>
+                                            <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                            <td><span class="badge bg-primary">董事</span></td>
+                                            <td>30%</td>
+                                            <td><span class="badge bg-success">现任</span></td>
+                                            <td>2020-03-01</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看企业</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>XYZ贸易有限公司</td>
+                                            <td><span class="badge bg-light text-dark">CID7E2B9D1</span></td>
+                                            <td><span class="badge bg-info">股东</span></td>
+                                            <td>15%</td>
+                                            <td><span class="badge bg-success">现任</span></td>
+                                            <td>2019-11-15</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看企业</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>DEF咨询公司</td>
+                                            <td><span class="badge bg-light text-dark">CID3A8F1C6</span></td>
+                                            <td><span class="badge bg-secondary">前董事</span></td>
+                                            <td>-</td>
+                                            <td><span class="badge bg-warning">已离任</span></td>
+                                            <td>2018-01-10</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">查看企业</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="audit" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>操作类型</th>
+                                            <th>操作内容</th>
+                                            <th>操作人</th>
+                                            <th>IP地址</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>2025-10-20 14:30</td>
+                                            <td><span class="badge bg-info">信息更新</span></td>
+                                            <td>更新联系信息</td>
+                                            <td>合规官A</td>
+                                            <td>192.168.1.100</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2025-10-15 11:20</td>
+                                            <td><span class="badge bg-primary">KYC筛查</span></td>
+                                            <td>年度KYC审查完成</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2025-08-20 09:45</td>
+                                            <td><span class="badge bg-success">关联添加</span></td>
+                                            <td>添加与企业ABC科技有限公司的关联</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2025-05-10 16:15</td>
+                                            <td><span class="badge bg-secondary">档案创建</span></td>
+                                            <td>创建个人档案</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="company-profile" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>企业档案详情</h2>
+                <div>
+                    <button class="btn btn-outline-primary me-2">
+                        <i class="fas fa-download me-1"></i> 导出档案
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-redo me-1"></i> 发起复审
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="profile-header">
+                    <div class="d-flex align-items-center">
+                        <div class="profile-avatar">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-1">ABC科技有限公司</h3>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-light text-dark me-2">CID5B9E7D4</span>
+                                <span class="risk-badge risk-medium me-2">中风险</span>
+                                <span class="badge bg-success me-2">活跃</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body p-0">
+                    <ul class="nav nav-tabs" id="companyProfileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="company-overview-tab" data-bs-toggle="tab" data-bs-target="#company-overview" type="button" role="tab">企业信息</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="shareholders-tab" data-bs-toggle="tab" data-bs-target="#shareholders" type="button" role="tab">股权结构</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="kyb-history-tab" data-bs-toggle="tab" data-bs-target="#kyb-history" type="button" role="tab">KYB历史</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="company-audit-tab" data-bs-toggle="tab" data-bs-target="#company-audit" type="button" role="tab">操作日志</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="companyProfileTabContent">
+                        <div class="tab-pane fade show active" id="company-overview" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">基本信息</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="40%"><strong>企业名称</strong></td>
+                                            <td>ABC科技有限公司</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>注册国家</strong></td>
+                                            <td>中国</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>注册号</strong></td>
+                                            <td>123456789</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>企业类型</strong></td>
+                                            <td>有限责任公司</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>成立日期</strong></td>
+                                            <td>2018-05-20</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>行业</strong></td>
+                                            <td>科技</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="mb-3">风险评估</h5>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td width="40%"><strong>KY风险评分</strong></td>
+                                            <td>65/100 <span class="risk-badge risk-medium ms-2">中风险</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>PEP状态</strong></td>
+                                            <td><span class="badge bg-success">无PEP</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>制裁状态</strong></td>
+                                            <td><span class="badge bg-success">无制裁</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>负面媒体</strong></td>
+                                            <td><span class="badge bg-warning">有</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>高风险UBO数量</strong></td>
+                                            <td>1</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>下次复审日期</strong></td>
+                                            <td>2026-04-15</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5 class="mb-3">联系信息</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td width="30%"><strong>联系电话</strong></td>
+                                                <td>+86 10 12345678</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>电子邮箱</strong></td>
+                                                <td>contact@abc-tech.com</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <table class="table table-borderless">
+                                            <tr>
+                                                <td width="30%"><strong>注册地址</strong></td>
+                                                <td>北京市海淀区xx路xx号</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>网站</strong></td>
+                                                <td>www.abc-tech.com</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h5 class="mb-3">相关人员</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>姓名</th>
+                                                <th>PID</th>
+                                                <th>角色</th>
+                                                <th>持股比例</th>
+                                                <th>风险等级</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>张三</td>
+                                                <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                                <td><span class="badge bg-primary">董事</span></td>
+                                                <td>30%</td>
+                                                <td><span class="risk-badge risk-low">低风险</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">查看个人</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>李四</td>
+                                                <td><span class="badge bg-light text-dark">PID3C8A1F6</span></td>
+                                                <td><span class="badge bg-info">股东</span></td>
+                                                <td>25%</td>
+                                                <td><span class="risk-badge risk-high">高风险</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">查看个人</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>王五</td>
+                                                <td><span class="badge bg-light text-dark">PID9B2E7D1</span></td>
+                                                <td><span class="badge bg-secondary">监事</span></td>
+                                                <td>-</td>
+                                                <td><span class="risk-badge risk-low">低风险</span></td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-primary">查看个人</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="shareholders" role="tabpanel">
+                            <div class="shareholder-chart">
+                                <h5 class="mb-4">股权结构图</h5>
+                                <div class="d-flex justify-content-center flex-wrap">
+                                    <div class="node node-company node-highlight">
+                                        <div>ABC科技有限公司</div>
+                                        <div class="small text-muted">CID5B9E7D4</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-center my-3">
+                                    <div class="connection" style="width: 80%;"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-around flex-wrap">
+                                    <div class="node node-person">
+                                        <div>张三</div>
+                                        <div class="small text-muted">PID8A3F2C1</div>
+                                        <div class="fw-bold mt-1">30%</div>
+                                        <div class="small text-muted">董事</div>
+                                    </div>
+                                    
+                                    <div class="node node-person">
+                                        <div>李四</div>
+                                        <div class="small text-muted">PID3C8A1F6</div>
+                                        <div class="fw-bold mt-1">25%</div>
+                                        <div class="small text-muted">股东</div>
+                                    </div>
+                                    
+                                    <div class="node node-company">
+                                        <div>XYZ投资公司</div>
+                                        <div class="small text-muted">CID7E2B9D1</div>
+                                        <div class="fw-bold mt-1">45%</div>
+                                        <div class="small text-muted">法人股东</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-center mt-4">
+                                    <button class="btn btn-outline-primary me-2">
+                                        <i class="fas fa-download me-1"></i> 导出PNG
+                                    </button>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-file-pdf me-1"></i> 导出PDF
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="kyb-history" role="tabpanel">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>KYB筛查 - 年度复审</h6>
+                                                <span class="timeline-date">2025-09-10</span>
+                                            </div>
+                                            <p>常规年度KYB审查，风险评分65/100，中风险</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20250910003</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>KYB筛查 - 股权变更</h6>
+                                                <span class="timeline-date">2024-12-05</span>
+                                            </div>
+                                            <p>因股权结构变更进行的KYB筛查</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20241205008</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>初始KYB筛查</h6>
+                                                <span class="timeline-date">2020-03-01</span>
+                                            </div>
+                                            <p>企业入驻时的初始KYB筛查</p>
+                                            <div class="d-flex">
+                                                <span class="badge bg-success me-2">已批准</span>
+                                                <span class="badge bg-light text-dark">CASE20200301001</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tab-pane fade" id="company-audit" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>时间</th>
+                                            <th>操作类型</th>
+                                            <th>操作内容</th>
+                                            <th>操作人</th>
+                                            <th>IP地址</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>2025-09-10 14:20</td>
+                                            <td><span class="badge bg-primary">KYB筛查</span></td>
+                                            <td>年度KYB审查完成</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2025-08-15 10:35</td>
+                                            <td><span class="badge bg-info">信息更新</span></td>
+                                            <td>更新企业联系信息</td>
+                                            <td>合规官B</td>
+                                            <td>192.168.1.105</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2024-12-05 16:40</td>
+                                            <td><span class="badge bg-warning">股权变更</span></td>
+                                            <td>股权结构变更审查</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                        <tr>
+                                            <td>2020-03-01 09:15</td>
+                                            <td><span class="badge bg-secondary">档案创建</span></td>
+                                            <td>创建企业档案</td>
+                                            <td>系统</td>
+                                            <td>系统</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="workflows" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>工作流管理</h2>
+                <div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newWorkflowModal">
+                        <i class="fas fa-plus me-2"></i> 新建工作流
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">工作流列表</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>工作流ID</th>
+                                    <th>类型</th>
+                                    <th>目标档案</th>
+                                    <th>发起人</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>最后更新</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">ECDD20251020001</span></td>
+                                    <td><span class="badge bg-primary">ECDD</span></td>
+                                    <td>张三 (PID8A3F2C1)</td>
+                                    <td>合规官A</td>
+                                    <td><span class="workflow-status status-in-progress">进行中</span></td>
+                                    <td>2025-10-20 10:30</td>
+                                    <td>2025-10-20 14:15</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">PR20251019001</span></td>
+                                    <td><span class="badge bg-info">Profile Review</span></td>
+                                    <td>李四 (PID3C8A1F6)</td>
+                                    <td>系统自动</td>
+                                    <td><span class="workflow-status status-completed">已完成</span></td>
+                                    <td>2025-10-19 09:15</td>
+                                    <td>2025-10-19 16:45</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">ECDD20251018001</span></td>
+                                    <td><span class="badge bg-primary">ECDD</span></td>
+                                    <td>ABC科技有限公司 (CID5B9E7D4)</td>
+                                    <td>合规官B</td>
+                                    <td><span class="workflow-status status-pending">待处理</span></td>
+                                    <td>2025-10-18 14:20</td>
+                                    <td>2025-10-18 14:20</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-light text-dark">PR20251017001</span></td>
+                                    <td><span class="badge bg-info">Profile Review</span></td>
+                                    <td>王五 (PID9B2E7D1)</td>
+                                    <td>合规官A</td>
+                                    <td><span class="workflow-status status-rejected">已拒绝</span></td>
+                                    <td>2025-10-17 11:05</td>
+                                    <td>2025-10-17 15:30</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看详情</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="工作流分页">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">上一页</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>ECDD工作流详情 - ECDD20251020001</span>
+                    <div>
+                        <span class="workflow-status status-in-progress me-2">进行中</span>
+                        <button class="btn btn-sm btn-outline-primary">导出流程</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>基本信息</h5>
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td width="30%"><strong>工作流ID</strong></td>
+                                    <td>ECDD20251020001</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>目标档案</strong></td>
+                                    <td>张三 (PID8A3F2C1)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>工作流类型</strong></td>
+                                    <td><span class="badge bg-primary">ECDD</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>发起人</strong></td>
+                                    <td>合规官A</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>创建时间</strong></td>
+                                    <td>2025-10-20 10:30</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>最后更新</strong></td>
+                                    <td>2025-10-20 14:15</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>流程概览</h5>
+                            <div class="workflow-timeline">
+                                <div class="workflow-timeline-item completed">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>发起ECDD流程</h6>
+                                                <span class="workflow-timeline-date">2025-10-20 10:30</span>
+                                            </div>
+                                            <p>合规官A发起了ECDD流程，选择了需要更新的字段：地址证明、职业信息</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="workflow-timeline-item completed">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>发送邮件通知客户</h6>
+                                                <span class="workflow-timeline-date">2025-10-20 10:35</span>
+                                            </div>
+                                            <p>系统已向客户发送邮件通知，要求更新相关信息</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="workflow-timeline-item current">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>等待客户回填信息</h6>
+                                                <span class="workflow-timeline-date">进行中</span>
+                                            </div>
+                                            <p>等待客户通过邮件链接更新所需信息</p>
+                                            <div class="mt-2">
+                                                <button class="btn btn-sm btn-outline-primary">重新发送邮件</button>
+                                                <button class="btn btn-sm btn-outline-warning">跳过此步骤</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="workflow-timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>审核更新信息</h6>
+                                                <span class="workflow-timeline-date">待处理</span>
+                                            </div>
+                                            <p>审核客户提交的更新信息</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="workflow-timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>决定是否重新KYC</h6>
+                                                <span class="workflow-timeline-date">待处理</span>
+                                            </div>
+                                            <p>根据信息变更情况决定是否重新进行KYC筛查</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="workflow-timeline-item">
+                                    <div class="card mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between">
+                                                <h6>完成ECDD流程</h6>
+                                                <span class="workflow-timeline-date">待处理</span>
+                                            </div>
+                                            <p>完成ECDD流程并更新档案信息</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-actions">
+                        <div>
+                            <button class="btn btn-outline-secondary">暂停流程</button>
+                            <button class="btn btn-outline-danger">终止流程</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary">继续流程</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="relationships" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>关联关系管理</h2>
+                <button class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> 添加关联
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">企业与人员关联</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>企业名称</th>
+                                    <th>CID</th>
+                                    <th>人员姓名</th>
+                                    <th>PID</th>
+                                    <th>角色</th>
+                                    <th>持股比例</th>
+                                    <th>状态</th>
+                                    <th>数据来源</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>ABC科技有限公司</td>
+                                    <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                    <td>张三</td>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td><span class="badge bg-primary">董事</span></td>
+                                    <td>30%</td>
+                                    <td><span class="badge bg-success">现任</span></td>
+                                    <td><span class="badge bg-info">注册处</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1">编辑</button>
+                                        <button class="btn btn-sm btn-outline-danger">移除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>ABC科技有限公司</td>
+                                    <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                    <td>李四</td>
+                                    <td><span class="badge bg-light text-dark">PID3C8A1F6</span></td>
+                                    <td><span class="badge bg-info">股东</span></td>
+                                    <td>25%</td>
+                                    <td><span class="badge bg-success">现任</span></td>
+                                    <td><span class="badge bg-info">注册处</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1">编辑</button>
+                                        <button class="btn btn-sm btn-outline-danger">移除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>XYZ贸易有限公司</td>
+                                    <td><span class="badge bg-light text-dark">CID7E2B9D1</span></td>
+                                    <td>张三</td>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td><span class="badge bg-info">股东</span></td>
+                                    <td>15%</td>
+                                    <td><span class="badge bg-success">现任</span></td>
+                                    <td><span class="badge bg-warning">人工录入</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1">编辑</button>
+                                        <button class="btn btn-sm btn-outline-danger">移除</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>DEF咨询公司</td>
+                                    <td><span class="badge bg-light text-dark">CID3A8F1C6</span></td>
+                                    <td>张三</td>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td><span class="badge bg-secondary">前董事</span></td>
+                                    <td>-</td>
+                                    <td><span class="badge bg-warning">已离任</span></td>
+                                    <td><span class="badge bg-info">注册处</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary me-1">查看</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="关联关系分页">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">上一页</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">ID合并记录</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>合并时间</th>
+                                    <th>原ID</th>
+                                    <th>目标ID</th>
+                                    <th>类型</th>
+                                    <th>合并原因</th>
+                                    <th>操作人</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-10-18 11:30</td>
+                                    <td><span class="badge bg-light text-dark">PID2B4C6A8</span></td>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td><span class="badge bg-light text-dark">个人</span></td>
+                                    <td>重复创建的个人档案</td>
+                                    <td>系统自动</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2025-09-05 14:15</td>
+                                    <td><span class="badge bg-light text-dark">CID9D7F3A2</span></td>
+                                    <td><span class="badge bg-light text-dark">CID5B9E7D4</span></td>
+                                    <td><span class="badge bg-light text-dark">企业</span></td>
+                                    <td>企业名称变更</td>
+                                    <td>合规官A</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="audit-logs" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>审计日志</h2>
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-download me-1"></i> 导出日志
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">审计日志查询</div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">起始日期</label>
+                            <input type="date" class="form-control" value="2025-10-01">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">结束日期</label>
+                            <input type="date" class="form-control" value="2025-10-20">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">操作人</label>
+                            <select class="form-select">
+                                <option value="">所有用户</option>
+                                <option value="user1">合规官A</option>
+                                <option value="user2">合规官B</option>
+                                <option value="system">系统</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">操作类型</label>
+                            <select class="form-select">
+                                <option value="">所有类型</option>
+                                <option value="create">创建</option>
+                                <option value="update">更新</option>
+                                <option value="delete">删除</option>
+                                <option value="merge">合并</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-outline-secondary me-2">重置</button>
+                        <button class="btn btn-primary">查询</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>审计日志记录</span>
+                    <div class="text-muted small">找到 128 条记录</div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>操作类型</th>
+                                    <th>操作对象</th>
+                                    <th>对象ID</th>
+                                    <th>操作内容</th>
+                                    <th>操作人</th>
+                                    <th>IP地址</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-10-20 14:30:25</td>
+                                    <td><span class="badge bg-info">信息更新</span></td>
+                                    <td>个人档案</td>
+                                    <td><span class="badge bg-light text-dark">PID8A3F2C1</span></td>
+                                    <td>更新联系信息</td>
+                                    <td>合规官A</td>
+                                    <td>192.168.1.100</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-20 11:15:42</td>
+                                    <td><span class="badge bg-primary">KYC筛查</span></td>
+                                    <td>个人档案</td>
+                                    <td><span class="badge bg-light text-dark">PID9B2E7D1</span></td>
+                                    <td>年度KYC审查完成</td>
+                                    <td>系统</td>
+                                    <td>系统</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-19 16:20:18</td>
+                                    <td><span class="badge bg-success">关联添加</span></td>
+                                    <td>关联关系</td>
+                                    <td><span class="badge bg-light text-dark">REL20251019003</span></td>
+                                    <td>添加人员与企业关联</td>
+                                    <td>系统</td>
+                                    <td>系统</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-18 11:30:05</td>
+                                    <td><span class="badge bg-warning">ID合并</span></td>
+                                    <td>个人档案</td>
+                                    <td><span class="badge bg-light text-dark">PID2B4C6A8</span></td>
+                                    <td>合并重复个人档案</td>
+                                    <td>系统自动</td>
+                                    <td>系统</td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-17 09:45:33</td>
+                                    <td><span class="badge bg-secondary">档案创建</span></td>
+                                    <td>企业档案</td>
+                                    <td><span class="badge bg-light text-dark">CID8F3A1D5</span></td>
+                                    <td>创建新企业档案</td>
+                                    <td>系统</td>
+                                    <td>系统</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <nav aria-label="审计日志分页">
+                        <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#">上一页</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">下一页</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div id="feature-flags" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>灰度开关配置</h2>
+                <button class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i> 保存配置
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">功能开关</div>
+                <div class="card-body">
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">统一客户档案系统</div>
+                            <div class="feature-desc">启用个人档案和企业档案功能</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="profileSystemSwitch" checked>
+                            <label class="form-check-label" for="profileSystemSwitch"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">ID自动匹配</div>
+                            <div class="feature-desc">高置信度自动绑定个人/企业ID</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="idMatchingSwitch" checked>
+                            <label class="form-check-label" for="idMatchingSwitch"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">ECDD流程</div>
+                            <div class="feature-desc">启用增强型客户尽职调查流程</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="ecddSwitch" checked>
+                            <label class="form-check-label" for="ecddSwitch"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">Profile Review</div>
+                            <div class="feature-desc">启用轻量级定向复审功能</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="prSwitch" checked>
+                            <label class="form-check-label" for="prSwitch"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">ID合并功能</div>
+                            <div class="feature-desc">允许合并重复的个人/企业ID</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="idMergeSwitch">
+                            <label class="form-check-label" for="idMergeSwitch"></label>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-flag">
+                        <div>
+                            <div class="feature-name">全局搜索</div>
+                            <div class="feature-desc">启用Elasticsearch全文搜索</div>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="searchSwitch" checked>
+                            <label class="form-check-label" for="searchSwitch"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">租户白名单</div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">启用统一客户档案的租户</label>
+                        <select class="form-select" multiple>
+                            <option selected>租户A</option>
+                            <option selected>租户B</option>
+                            <option>租户C</option>
+                            <option>租户D</option>
+                            <option>租户E</option>
+                        </select>
+                        <div class="form-text">按住Ctrl键可选择多个租户</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">用户白名单</label>
+                        <textarea class="form-control" rows="3" placeholder="输入用户ID，每行一个">user001
+user003
+user005</textarea>
+                        <div class="form-text">只有列表中的用户才能访问统一客户档案功能</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">系统监控</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h4 class="text-primary">1,248</h4>
+                                    <p class="text-muted">个人档案总数</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h4 class="text-primary">562</h4>
+                                    <p class="text-muted">企业档案总数</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h4 class="text-primary">28</h4>
+                                    <p class="text-muted">ID合并操作</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5>API性能指标</h5>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>API端点</th>
+                                    <th>平均响应时间</th>
+                                    <th>成功率</th>
+                                    <th>今日调用次数</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>/api/v1/profile/personal/findOrCreate</td>
+                                    <td>120ms</td>
+                                    <td>99.8%</td>
+                                    <td>245</td>
+                                </tr>
+                                <tr>
+                                    <td>/api/v1/profile/personal/{pid}</td>
+                                    <td>85ms</td>
+                                    <td>99.9%</td>
+                                    <td>1,024</td>
+                                </tr>
+                                <tr>
+                                    <td>/api/v1/profile/company/findOrCreate</td>
+                                    <td>150ms</td>
+                                    <td>99.5%</td>
+                                    <td>89</td>
+                                </tr>
+                                <tr>
+                                    <td>/api/v1/profile/search</td>
+                                    <td>210ms</td>
+                                    <td>98.7%</td>
+                                    <td>567</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="project-overview" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>项目概览</h3>
+                <div>
+                    <button class="btn btn-outline-primary me-2">
+                        <i class="fas fa-download me-1"></i> 导出报告
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-sync-alt me-1"></i> 刷新数据
+                    </button>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-primary">78%</div>
+                        <div class="metric-label">项目完成度</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-success">42</div>
+                        <div class="metric-label">已完成任务</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-warning">12</div>
+                        <div class="metric-label">进行中任务</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-danger">3</div>
+                        <div class="metric-label">高风险问题</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">项目状态概览</div>
+                        <div class="card-body">
+                            <h5 class="mb-3">统一客户档案系统开发项目</h5>
+                            <p>本项目旨在为XXX平台构建统一客户档案系统，实现个人档案(PersonalProfile)和企业档案(CompanyProfile)的集中管理，提供全局ID映射服务，并与现有Case/Onboarding/KYC/KYB/KYT各模块无缝衔接。</p>
+                            
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h6>核心功能模块</h6>
+                                    <ul>
+                                        <li>IDMapping服务 - 全局ID生成/匹配/合并</li>
+                                        <li>PersonalProfile - 个人360°聚合视图</li>
+                                        <li>CompanyProfile - 企业360°聚合视图</li>
+                                        <li>关联关系管理 - 人与企业角色映射</li>
+                                        <li>审计与权限管理</li>
+                                        <li>灰度发布控制</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>技术特性</h6>
+                                    <ul>
+                                        <li>性能：Profile页加载 &lt; 1s（99分位）</li>
+                                        <li>安全：证件号加密存储，HTTPS全链路</li>
+                                        <li>可扩展：字段级权限控制</li>
+                                        <li>零侵入：不修改现网case_id主键</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>当前项目健康度</h6>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">进度 85%</div>
+                                </div>
+                                <div class="progress mb-2">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">质量 90%</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">资源 70%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">关键指标</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">代码完成率</div>
+                                    <small class="text-muted">后端/前端/测试</small>
+                                </div>
+                                <span class="badge bg-success">92%</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">API测试通过率</div>
+                                    <small class="text-muted">124/130个接口</small>
+                                </div>
+                                <span class="badge bg-success">95%</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                                <div>
+                                    <div class="fw-bold">性能达标率</div>
+                                    <small class="text-muted">Profile加载时间</small>
+                                </div>
+                                <span class="badge bg-warning">88%</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-3">
+                                <div>
+                                    <div class="fw-bold">安全合规检查</div>
+                                    <small class="text-muted">加密/Audit/GDPR</small>
+                                </div>
+                                <span class="badge bg-success">100%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-4">
+                        <div class="card-header">项目团队</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>产品经理</span>
+                                <span class="badge bg-primary">3人</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>后端开发</span>
+                                <span class="badge bg-success">5人</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>前端开发</span>
+                                <span class="badge bg-info">3人</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>测试工程师</span>
+                                <span class="badge bg-warning">2人</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center p-2">
+                                <span>运维工程师</span>
+                                <span class="badge bg-secondary">2人</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="business-rules" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>业务规则</h3>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRuleModal">
+                    <i class="fas fa-plus me-1"></i> 添加规则
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">核心业务规则</div>
+                <div class="card-body">
+                    <div class="rule-item">
+                        <div class="rule-id">R1</div>
+                        <h6>PersonalProfile必须存在且状态Active才允许同步到KYB人员信息</h6>
+                        <p class="mb-0">确保只有有效且活跃的个人档案才能被企业档案引用，防止数据不一致。</p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R2</div>
+                        <h6>ECDD/PR流程未结束前，对应字段锁定不可再次编辑</h6>
+                        <p class="mb-0">防止在增强型尽调或档案复审过程中数据被意外修改，确保流程完整性。</p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R3</div>
+                        <h6>合并后的旧PID禁止再被引用，新case一律使用merged_to PID</h6>
+                        <p class="mb-0">确保ID合并后数据一致性，所有新案例必须引用合并后的主ID。</p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R4</div>
+                        <h6>证件到期前60天系统邮件提醒客户 & 合规官</h6>
+                        <p class="mb-0">提前预警证件即将到期，确保客户及时更新证件信息，避免业务中断。</p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R5</div>
+                        <h6>高风险（High）人员/企业任意信息变更，实时写入audit_log并通知风控组</h6>
+                        <p class="mb-0">对高风险实体的任何变更进行严格审计追踪，确保风控团队及时掌握变更情况。</p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R6</div>
+                        <h6>ID匹配置信度规则</h6>
+                        <p class="mb-0">
+                            - 高置信度（>90%）：自动绑定<br>
+                            - 中置信度（70%-90%）：弹窗人工选择<br>
+                            - 低置信度（<70%）：新建档案
+                        </p>
+                    </div>
+                    
+                    <div class="rule-item">
+                        <div class="rule-id">R7</div>
+                        <h6>档案信息更新权限规则</h6>
+                        <p class="mb-0">
+                            - 基础信息：客户可自助更新<br>
+                            - 核心身份信息：需通过ECDD流程<br>
+                            - 风险标记：仅限风控团队修改
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">规则执行状态</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>规则ID</th>
+                                    <th>规则描述</th>
+                                    <th>状态</th>
+                                    <th>最后验证</th>
+                                    <th>执行次数</th>
+                                    <th>违规次数</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>R1</td>
+                                    <td>PersonalProfile必须存在且状态Active才允许同步到KYB人员信息</td>
+                                    <td><span class="badge bg-success">生效中</span></td>
+                                    <td>2025-10-20</td>
+                                    <td>1,248</td>
+                                    <td>12</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">日志</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>R2</td>
+                                    <td>ECDD/PR流程未结束前，对应字段锁定不可再次编辑</td>
+                                    <td><span class="badge bg-success">生效中</span></td>
+                                    <td>2025-10-20</td>
+                                    <td>567</td>
+                                    <td>5</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">日志</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>R3</td>
+                                    <td>合并后的旧PID禁止再被引用，新case一律使用merged_to PID</td>
+                                    <td><span class="badge bg-success">生效中</span></td>
+                                    <td>2025-10-19</td>
+                                    <td>28</td>
+                                    <td>0</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">日志</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>R4</td>
+                                    <td>证件到期前60天系统邮件提醒客户 & 合规官</td>
+                                    <td><span class="badge bg-warning">测试中</span></td>
+                                    <td>2025-10-18</td>
+                                    <td>42</td>
+                                    <td>3</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">日志</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>R5</td>
+                                    <td>高风险人员/企业任意信息变更，实时写入audit_log并通知风控组</td>
+                                    <td><span class="badge bg-success">生效中</span></td>
+                                    <td>2025-10-20</td>
+                                    <td>89</td>
+                                    <td>0</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">日志</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="security-compliance" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>安全与合规</h3>
+                <button class="btn btn-primary">
+                    <i class="fas fa-shield-alt me-1"></i> 安全审计
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">安全控制措施</div>
+                <div class="card-body">
+                    <div class="security-level">
+                        <div>
+                            <div class="security-name">数据加密</div>
+                            <div class="security-desc">敏感字段（证件号、地址）AES256GCM加密存储，密钥托管在KMS</div>
+                        </div>
+                        <span class="badge bg-success">已实施</span>
+                    </div>
+                    
+                    <div class="security-level">
+                        <div>
+                            <div class="security-name">传输安全</div>
+                            <div class="security-desc">HTTPS全链路加密，TLS 1.2+</div>
+                        </div>
+                        <span class="badge bg-success">已实施</span>
+                    </div>
+                    
+                    <div class="security-level">
+                        <div>
+                            <div class="security-name">访问控制</div>
+                            <div class="security-desc">基于角色的访问控制(RBAC)，敏感操作需要2FA</div>
+                        </div>
+                        <span class="badge bg-success">已实施</span>
+                    </div>
+                    
+                    <div class="security-level">
+                        <div>
+                            <div class="security-name">审计日志</div>
+                            <div class="security-desc">所有写接口记录audit_log，保留 ≥ 5年</div>
+                        </div>
+                        <span class="badge bg-success">已实施</span>
+                    </div>
+                    
+                    <div class="security-level">
+                        <div>
+                            <div class="security-name">数据保留与删除</div>
+                            <div class="security-desc">支持GDPR删除：Profile打Deleted标记，加密字段置空，不可物理删除</div>
+                        </div>
+                        <span class="badge bg-warning">部分实施</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">合规要求</div>
+                <div class="card-body">
+                    <div class="compliance-item">
+                        <h6>AML/CFT合规</h6>
+                        <p>确保符合反洗钱/打击恐怖融资法规要求，提供完整的客户尽职调查和持续监控能力。</p>
+                        <span class="compliance-status status-compliant">合规</span>
+                    </div>
+                    
+                    <div class="compliance-item">
+                        <h6>GDPR合规</h6>
+                        <p>支持数据主体权利，包括访问权、更正权、删除权（被遗忘权）、限制处理权等。</p>
+                        <span class="compliance-status status-compliant">合规</span>
+                    </div>
+                    
+                    <div class="compliance-item">
+                        <h6>数据本地化要求</h6>
+                        <p>根据不同司法管辖区要求，支持数据存储和处理的地理位置限制。</p>
+                        <span class="compliance-status status-pending">评估中</span>
+                    </div>
+                    
+                    <div class="compliance-item">
+                        <h6>监管报告</h6>
+                        <p>支持生成监管要求的各种报告格式，包括可疑交易报告、大额交易报告等。</p>
+                        <span class="compliance-status status-compliant">合规</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">安全事件日志</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>时间</th>
+                                    <th>事件类型</th>
+                                    <th>严重程度</th>
+                                    <th>描述</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2025-10-20 14:30</td>
+                                    <td>异常登录尝试</td>
+                                    <td><span class="risk-level risk-low">低</span></td>
+                                    <td>检测到来自异常IP的登录尝试</td>
+                                    <td><span class="badge bg-success">已处理</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-19 11:15</td>
+                                    <td>权限变更</td>
+                                    <td><span class="risk-level risk-medium">中</span></td>
+                                    <td>用户权限被修改为高级别</td>
+                                    <td><span class="badge bg-success">已审核</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-18 09:45</td>
+                                    <td>数据导出</td>
+                                    <td><span class="risk-level risk-medium">中</span></td>
+                                    <td>批量导出客户数据操作</td>
+                                    <td><span class="badge bg-success">已批准</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2025-10-17 16:20</td>
+                                    <td>API异常调用</td>
+                                    <td><span class="risk-level risk-high">高</span></td>
+                                    <td>检测到异常的API调用模式</td>
+                                    <td><span class="badge bg-warning">调查中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="operations-monitoring" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>运营与监控</h3>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download me-1"></i> 导出报告
+                </button>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-primary">99.8%</div>
+                        <div class="metric-label">API可用性</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-success">0.8s</div>
+                        <div class="metric-label">平均响应时间</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-info">1,248</div>
+                        <div class="metric-label">个人档案总数</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="metric-card">
+                        <div class="metric-value text-warning">562</div>
+                        <div class="metric-label">企业档案总数</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">Prometheus监控指标</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>API性能指标</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>指标名称</th>
+                                        <th>当前值</th>
+                                        <th>目标值</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>profile_api_2xx_rate</td>
+                                        <td>99.8%</td>
+                                        <td>> 99.5%</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>profile_api_4xx_rate</td>
+                                        <td>0.15%</td>
+                                        <td>< 0.5%</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>profile_api_5xx_rate</td>
+                                        <td>0.05%</td>
+                                        <td>< 0.1%</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>profile_page_load_bucket</td>
+                                        <td>0.8s</td>
+                                        <td>< 1.0s</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>业务指标</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>指标名称</th>
+                                        <th>当前值</th>
+                                        <th>日变化</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>id_mapping_merge_total</td>
+                                        <td>28</td>
+                                        <td>+3</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>personal_profile_created</td>
+                                        <td>1,248</td>
+                                        <td>+42</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>company_profile_created</td>
+                                        <td>562</td>
+                                        <td>+15</td>
+                                        <td><span class="badge bg-success">正常</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>ecdd_workflow_active</td>
+                                        <td>18</td>
+                                        <td>+5</td>
+                                        <td><span class="badge bg-warning">关注</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">灰度发布监控</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>租户</th>
+                                    <th>功能</th>
+                                    <th>状态</th>
+                                    <th>用户数量</th>
+                                    <th>开始时间</th>
+                                    <th>错误率</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>租户A</td>
+                                    <td>统一客户档案系统</td>
+                                    <td><span class="badge bg-success">已启用</span></td>
+                                    <td>150</td>
+                                    <td>2025-10-15</td>
+                                    <td>0.2%</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-warning">降级</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>租户B</td>
+                                    <td>统一客户档案系统</td>
+                                    <td><span class="badge bg-success">已启用</span></td>
+                                    <td>80</td>
+                                    <td>2025-10-18</td>
+                                    <td>0.5%</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-warning">降级</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>租户C</td>
+                                    <td>统一客户档案系统</td>
+                                    <td><span class="badge bg-warning">测试中</span></td>
+                                    <td>25</td>
+                                    <td>2025-10-20</td>
+                                    <td>1.2%</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">升级</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>租户D</td>
+                                    <td>统一客户档案系统</td>
+                                    <td><span class="badge bg-secondary">未启用</span></td>
+                                    <td>0</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">启用</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="risk-mitigation" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>风险与对策</h3>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRiskModal">
+                    <i class="fas fa-plus me-1"></i> 添加风险
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">项目风险清单</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>风险描述</th>
+                                    <th>级别</th>
+                                    <th>概率</th>
+                                    <th>影响</th>
+                                    <th>状态</th>
+                                    <th>负责人</th>
+                                    <th>对策</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>历史case回补慢</td>
+                                    <td><span class="risk-level risk-medium">中</span></td>
+                                    <td>60%</td>
+                                    <td>中</td>
+                                    <td><span class="badge bg-warning">处理中</span></td>
+                                    <td>张工</td>
+                                    <td>分批限速，支持断点续跑；灰度开关可随时关闭</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">更新</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>高并发姓名匹配超时</td>
+                                    <td><span class="risk-level risk-high">高</span></td>
+                                    <td>30%</td>
+                                    <td>高</td>
+                                    <td><span class="badge bg-success">已缓解</span></td>
+                                    <td>李工</td>
+                                    <td>Elasticsearch预热 + 10ms滑动限流</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">更新</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>误合并导致数据错</td>
+                                    <td><span class="risk-level risk-high">高</span></td>
+                                    <td>10%</td>
+                                    <td>高</td>
+                                    <td><span class="badge bg-success">已缓解</span></td>
+                                    <td>王经理</td>
+                                    <td>合并前强制双人复核 + 快照备份可回滚</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">更新</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>第三方数据源不稳定</td>
+                                    <td><span class="risk-level risk-medium">中</span></td>
+                                    <td>40%</td>
+                                    <td>中</td>
+                                    <td><span class="badge bg-warning">处理中</span></td>
+                                    <td>刘工</td>
+                                    <td>实现数据缓存机制 + 降级方案</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">更新</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>性能不达标</td>
+                                    <td><span class="risk-level risk-low">低</span></td>
+                                    <td>20%</td>
+                                    <td>中</td>
+                                    <td><span class="badge bg-success">已缓解</span></td>
+                                    <td>陈工</td>
+                                    <td>数据库索引优化 + 查询缓存</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">更新</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">风险矩阵</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered text-center">
+                            <thead>
+                                <tr>
+                                    <th scope="col">概率/影响</th>
+                                    <th scope="col">低</th>
+                                    <th scope="col">中</th>
+                                    <th scope="col">高</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">高</th>
+                                    <td class="table-warning">中风险</td>
+                                    <td class="table-danger">高风险</td>
+                                    <td class="table-danger">高风险</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">中</th>
+                                    <td class="table-success">低风险</td>
+                                    <td class="table-warning">中风险</td>
+                                    <td class="table-danger">高风险</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">低</th>
+                                    <td class="table-success">低风险</td>
+                                    <td class="table-success">低风险</td>
+                                    <td class="table-warning">中风险</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h6>风险应对策略</h6>
+                        <ul>
+                            <li><strong>规避</strong>：改变项目计划，消除风险或保护项目目标不受影响</li>
+                            <li><strong>转移</strong>：将风险后果连同应对责任转移给第三方</li>
+                            <li><strong>减轻</strong>：降低风险概率和/或影响，使其达到可接受程度</li>
+                            <li><strong>接受</strong>：不采取任何措施，接受风险发生的可能性和影响</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="milestone-plan" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>里程碑计划</h3>
+                <button class="btn btn-primary">
+                    <i class="fas fa-calendar-alt me-1"></i> 导出计划
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">项目开发阶段</div>
+                <div class="card-body">
+                    <div class="milestone completed">
+                        <div class="milestone-date">T0</div>
+                        <h5>P0 需求冻结</h5>
+                        <p class="mb-0">本PRD + 原型评审通过</p>
+                        <div class="mt-2">
+                            <span class="badge bg-success">已完成</span>
+                            <small class="text-muted ms-2">完成日期: 2025-10-10</small>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone current">
+                        <div class="milestone-date">T0+2w</div>
+                        <h5>P1 后端开发</h5>
+                        <p class="mb-0">IDMapping + ProfileService + 接口单测</p>
+                        <div class="mt-2">
+                            <span class="badge bg-warning">进行中</span>
+                            <small class="text-muted ms-2">预计完成: 2025-10-24</small>
+                            <div class="progress mt-1" style="height: 8px;">
+                                <div class="progress-bar bg-warning" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone-future">
+                        <div class="milestone-date">T0+4w</div>
+                        <h5>P2 前端开发</h5>
+                        <p class="mb-0">Profile页面 + 搜索框</p>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">未开始</span>
+                            <small class="text-muted ms-2">预计开始: 2025-10-25</small>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone-future">
+                        <div class="milestone-date">T0+5w</div>
+                        <h5>P3 历史回补</h5>
+                        <p class="mb-0">回补脚本跑完 + 校验报告</p>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">未开始</span>
+                            <small class="text-muted ms-2">预计开始: 2025-11-08</small>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone-future">
+                        <div class="milestone-date">T0+6w</div>
+                        <h5>P4 灰度上线</h5>
+                        <p class="mb-0">白名单租户50%放量</p>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">未开始</span>
+                            <small class="text-muted ms-2">预计开始: 2025-11-15</span>
+                        </div>
+                    </div>
+                    
+                    <div class="milestone-future">
+                        <div class="milestone-date">T0+8w</div>
+                        <h5>P5 全量 & 结项</h5>
+                        <p class="mb-0">监控达标，文档归档</p>
+                        <div class="mt-2">
+                            <span class="badge bg-secondary">未开始</span>
+                            <small class="text-muted ms-2">预计开始: 2025-11-29</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">关键依赖项</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>依赖项</th>
+                                    <th>类型</th>
+                                    <th>状态</th>
+                                    <th>负责人</th>
+                                    <th>预计完成</th>
+                                    <th>影响</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Elasticsearch集群升级</td>
+                                    <td>基础设施</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>基础设施团队</td>
+                                    <td>2025-10-15</td>
+                                    <td><span class="risk-level risk-low">低</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>KMS密钥管理系统</td>
+                                    <td>安全</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>安全团队</td>
+                                    <td>2025-10-18</td>
+                                    <td><span class="risk-level risk-medium">中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>审计日志系统升级</td>
+                                    <td>基础设施</td>
+                                    <td><span class="badge bg-warning">进行中</span></td>
+                                    <td>基础设施团队</td>
+                                    <td>2025-10-28</td>
+                                    <td><span class="risk-level risk-high">高</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>现有系统接口兼容性测试</td>
+                                    <td>测试</td>
+                                    <td><span class="badge bg-secondary">未开始</span></td>
+                                    <td>测试团队</td>
+                                    <td>2025-11-05</td>
+                                    <td><span class="risk-level risk-high">高</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="api-reference" class="page-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>API参考</h3>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download me-1"></i> 导出API文档
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">API接口清单</div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>方法</th>
+                                    <th>URL</th>
+                                    <th>功能</th>
+                                    <th>状态</th>
+                                    <th>文档</th>
+                                    <th>测试</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="badge bg-success">POST</span></td>
+                                    <td><code>/api/v1/profile/personal/findOrCreate</code></td>
+                                    <td>输入证件信息→返回PID</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">测试</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-primary">GET</span></td>
+                                    <td><code>/api/v1/profile/personal/{pid}</code></td>
+                                    <td>获取PersonalProfile聚合数据</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">测试</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning">PUT</span></td>
+                                    <td><code>/api/v1/profile/personal</code></td>
+                                    <td>后台编辑（需权限）</td>
+                                    <td><span class="badge bg-warning">开发中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">POST</span></td>
+                                    <td><code>/api/v1/profile/company/findOrCreate</code></td>
+                                    <td>输入注册信息→返回CID</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">测试</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-primary">GET</span></td>
+                                    <td><code>/api/v1/profile/company/{cid}</code></td>
+                                    <td>获取CompanyProfile聚合数据</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">测试</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">POST</span></td>
+                                    <td><code>/api/v1/profile/ecdd</code></td>
+                                    <td>发起ECDD流程</td>
+                                    <td><span class="badge bg-warning">开发中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">POST</span></td>
+                                    <td><code>/api/v1/profile/pr</code></td>
+                                    <td>发起Profile Review</td>
+                                    <td><span class="badge bg-warning">开发中</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary">禁用</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-primary">GET</span></td>
+                                    <td><code>/api/v1/profile/search</code></td>
+                                    <td>全局搜索（ES）</td>
+                                    <td><span class="badge bg-success">已完成</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">查看</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-success">测试</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">API测试控制台</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">选择API</label>
+                                <select class="form-select" id="apiSelector">
+                                    <option value="/api/v1/profile/personal/findOrCreate">POST /personal/findOrCreate</option>
+                                    <option value="/api/v1/profile/personal/{pid}">GET /personal/{pid}</option>
+                                    <option value="/api/v1/profile/company/findOrCreate">POST /company/findOrCreate</option>
+                                    <option value="/api/v1/profile/company/{cid}">GET /company/{cid}</option>
+                                    <option value="/api/v1/profile/search">GET /search</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">请求参数</label>
+                                <textarea class="form-control" rows="10" placeholder="输入JSON格式的请求参数"></textarea>
+                            </div>
+                            
+                            <button class="btn btn-primary">发送请求</button>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label class="form-label">响应结果</label>
+                                <textarea class="form-control" rows="15" placeholder="API响应将显示在这里" readonly></textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">响应状态</label>
+                                        <input type="text" class="form-control" value="-" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">响应时间</label>
+                                        <input type="text" class="form-control" value="-" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ecddModal" tabindex="-1" aria-labelledby="ecddModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ecddModalLabel">发起ECDD流程</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">目标档案</label>
+                        <input type="text" class="form-control" value="张三 (PID8A3F2C1)" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">选择需要更新的字段</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="field1" checked>
+                            <label class="form-check-label" for="field1">
+                                地址证明
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="field2" checked>
+                            <label class="form-check-label" for="field2">
+                                职业信息
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="field3">
+                            <label class="form-check-label" for="field3">
+                                联系方式
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="field4">
+                            <label class="form-check-label" for="field4">
+                                身份证件
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">ECDD原因</label>
+                        <textarea class="form-control" rows="3" placeholder="请输入发起ECDD的原因..."></textarea>
+                    </div>
+                    
+                    <div class="workflow-step current">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">1</span>
+                            <h6 class="mb-0">选择需更新字段</h6>
+                        </div>
+                        <p class="mb-0">选择需要客户更新的信息字段</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">2</span>
+                            <h6 class="mb-0">邮件通知客户</h6>
+                        </div>
+                        <p class="mb-0">系统将自动发送邮件通知客户更新信息</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">3</span>
+                            <h6 class="mb-0">等待客户回填</h6>
+                        </div>
+                        <p class="mb-0">客户通过邮件链接更新所需信息</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">4</span>
+                            <h6 class="mb-0">审核更新信息</h6>
+                        </div>
+                        <p class="mb-0">审核客户提交的更新信息</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">5</span>
+                            <h6 class="mb-0">决定是否重新KYC</h6>
+                        </div>
+                        <p class="mb-0">根据信息变更情况决定是否重新进行KYC筛查</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">发起ECDD流程</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="prModal" tabindex="-1" aria-labelledby="prModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="prModalLabel">发起Profile Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">目标档案</label>
+                        <input type="text" class="form-control" value="张三 (PID8A3F2C1)" readonly>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">PR类型</label>
+                        <select class="form-select">
+                            <option value="document">重传证件</option>
+                            <option value="liveness">重做活体检测</option>
+                            <option value="both">重传证件和活体检测</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">PR原因</label>
+                        <textarea class="form-control" rows="3" placeholder="请输入发起Profile Review的原因..."></textarea>
+                    </div>
+                    
+                    <div class="workflow-step current">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">1</span>
+                            <h6 class="mb-0">选择PR类型</h6>
+                        </div>
+                        <p class="mb-0">选择需要客户重新提交的内容</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">2</span>
+                            <h6 class="mb-0">邮件通知客户</h6>
+                        </div>
+                        <p class="mb-0">系统将自动发送邮件通知客户重新提交所需内容</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">3</span>
+                            <h6 class="mb-0">等待客户提交</h6>
+                        </div>
+                        <p class="mb-0">客户通过邮件链接重新提交所需内容</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">4</span>
+                            <h6 class="mb-0">审核提交内容</h6>
+                        </div>
+                        <p class="mb-0">审核客户重新提交的内容</p>
+                    </div>
+                    
+                    <div class="workflow-step">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="step-number">5</span>
+                            <h6 class="mb-0">完成PR流程</h6>
+                        </div>
+                        <p class="mb-0">完成Profile Review并更新档案信息</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">发起Profile Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 页面导航功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 侧边栏导航点击事件
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            const pageSections = document.querySelectorAll('.page-section');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 移除所有活动状态
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    pageSections.forEach(s => s.classList.remove('active'));
+                    
+                    // 添加当前活动状态
+                    this.classList.add('active');
+                    
+                    const target = this.getAttribute('data-target');
+                    if (target) {
+                        const targetElement = document.getElementById(target);
+                        if (targetElement) {
+                            targetElement.classList.add('active');
+                        }
+                    }
+                });
+            });
+            
+            // 初始化Bootstrap标签页
+            const triggerTabList = [].slice.call(document.querySelectorAll('#personalProfileTabs button, #companyProfileTabs button'));
+            triggerTabList.forEach(function (triggerEl) {
+                var tabTrigger = new bootstrap.Tab(triggerEl);
+                
+                triggerEl.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    tabTrigger.show();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
